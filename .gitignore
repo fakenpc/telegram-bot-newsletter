@@ -1,0 +1,7 @@
+config.php
+.directory
+composer.lock
+/vendor/
+cookies
+*.pid
+test.php

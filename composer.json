@@ -1,0 +1,8 @@
+{
+    "name": "fakenpc/fl.ru-telegram-bot",
+    "type": "project",
+    "require": {
+        "php": ">=5.6",
+        "longman/telegram-bot": "*"
+    }
+} 
