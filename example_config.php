@@ -30,4 +30,6 @@ const MERCHANT_SECRET_RESPONSE = '';	// scret word 2
 // bot location url
 const BOT_URL = 'http://example.com/sport-predictions-telegram-bot/';
 
+// set 0 to disable trial
+const SUBSCRIPTION_TRIAL_DAYS = 10;
 ?>

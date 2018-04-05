@@ -26,80 +26,65 @@ use NewsletterCategoryDB;
  */
 class StartCommand extends SystemCommand
 {
-    /**
-     * @var string
-     */
-    protected $name = 'start';
+	/**
+	 * @var string
+	 */
+	protected $name = 'start';
 
-    /**
-     * @var string
-     */
-    protected $description = 'Start command';
+	/**
+	 * @var string
+	 */
+	protected $description = 'Start command';
 
-    /**
-     * @var string
-     */
-    protected $usage = '/start';
+	/**
+	 * @var string
+	 */
+	protected $usage = '/start';
 
-    /**
-     * @var string
-     */
-    protected $version = '1.0.0';
+	/**
+	 * @var string
+	 */
+	protected $version = '1.0.0';
 
-    /**
-     * @var bool
-     */
-    protected $private_only = true;
-    
-    /**
-     * @var bool
-     */
-    protected $need_mysql = true;
+	/**
+	 * @var bool
+	 */
+	protected $private_only = true;
+	
+	/**
+	 * @var bool
+	 */
+	protected $need_mysql = true;
 
-    /**
-     * Command execute method
-     *
-     * @return \Longman\TelegramBot\Entities\ServerResponse
-     * @throws \Longman\TelegramBot\Exception\TelegramException
-     */
-    public function execute()
-    {
-        SubscriberDB::initializeSubscriber();
-        NewsletterCategoryDB::initializeNewsletterCategory();
+	/**
+	 * Command execute method
+	 *
+	 * @return \Longman\TelegramBot\Entities\ServerResponse
+	 * @throws \Longman\TelegramBot\Exception\TelegramException
+	 */
+	public function execute()
+	{
+		SubscriberDB::initializeSubscriber();
+		NewsletterCategoryDB::initializeNewsletterCategory();
 
-        $message = $this->getMessage();
-        $chat_id = $message->getChat()->getId();
+		$message = $this->getMessage();
+		$chat_id = $message->getChat()->getId();
+		
+		$text = "Добро пожаловать !";
 
-        
-        $newsletter_categories = NewsletterCategoryDB::selectNewsletterCategory();
+        $inline_keyboard = new InlineKeyboard(
+            [ ['text' => "Информация", 'callback_data' => 'information'] ],
+            [ ['text' => "Статистика", 'callback_data' => 'statistics'] ],
+            [ ['text' => "Пробный период", 'callback_data' => 'trial'] ],
+            [ ['text' => "Рассылки", 'callback_data' => 'newsletter_categories'] ] 
+        );
 
-        foreach ($newsletter_categories as $newsletter_category) {
-            $images_dir_full_path = __DIR__.'/../images/';
-            $images_dir = '../images/';
-            $images = glob($images_dir_full_path.$newsletter_category['id'].'.*');
-            
-            if(count($images)) {
-                // send newsletter_category photo
-                $result = Request::sendPhoto([
-                    'chat_id' => $chat_id,
-                    'photo'   => Request::encodeFile($images[0]),
-                ]);
-            }
+        Request::sendMessage([
+            'chat_id' => $chat_id,
+            'text' => $text,
+            'reply_markup' => $inline_keyboard
+        ]);
 
-            $text = "Каппер: ".$newsletter_category['name'].PHP_EOL
-                ."Обо мне: ".$newsletter_category['description'];
-
-            $inline_keyboard = new InlineKeyboard([
-                ['text' => "Выбрать", 'callback_data' => 'newsletter_category '.$newsletter_category['id']],
-            ]);
-    
-            Request::sendMessage([
-                'chat_id' => $chat_id,
-                'text'    => $text,
-                'reply_markup' => $inline_keyboard
-            ]);
-        }
-
-        return true;
-    }
+		return true;
+	}
 }

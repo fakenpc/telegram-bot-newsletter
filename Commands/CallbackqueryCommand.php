@@ -21,10 +21,12 @@ require_once __DIR__.'/../SubscriberDB.php';
 require_once __DIR__.'/../SubscriptionDB.php';
 require_once __DIR__.'/../NewsletterCategoryDB.php';
 require_once __DIR__.'/../NewsletterDB.php';
+require_once __DIR__.'/../FieldDB.php';
 use SubscriberDB;
 use SubscriptionDB;
 use NewsletterCategoryDB;
 use NewsletterDB;
+use FieldDB;
 
 /**
  * Callback query command
@@ -87,6 +89,8 @@ class CallbackqueryCommand extends SystemCommand
         SubscriberDB::initializeSubscriber();
         NewsletterDB::initializeNewsletter();
         SubscriptionDB::initializeSubscription();
+        NewsletterCategoryDB::initializeNewsletterCategory();
+        FieldDB::initializeField();
 
         switch ($command) {
 
@@ -98,7 +102,6 @@ class CallbackqueryCommand extends SystemCommand
                 $subscription_paid = false;
                 $subscription_end_timestamp = 0;
 
-                var_dump($subscribers);
 
                 foreach($subscribers as $subscriber) {
                     if($subscriber['paid']) {
@@ -127,9 +130,9 @@ class CallbackqueryCommand extends SystemCommand
                         }
 
                         if($subscription_paid) {
-                            $text = 'Прогноз: '.PHP_EOL.$newsletter['name'].PHP_EOL.$newsletter['description'];
+                            $text = 'Название: '.PHP_EOL.$newsletter['name'].PHP_EOL.$newsletter['description'];
                         } else {
-                            $text = 'Прогноз: '.PHP_EOL.$newsletter['name'];
+                            $text = 'Название: '.PHP_EOL.$newsletter['name'];
                         }
 
                         Request::sendMessage([
@@ -142,25 +145,33 @@ class CallbackqueryCommand extends SystemCommand
                 if(!$flag) {
                     Request::sendMessage([
                         'chat_id'      => $chat_id,
-                        'text'         => 'В данный момент у каппера нет актуальных прогнозов. Зайдите позже.'
+                        'text'         => 'В данный момент нет актуальных сообщений рассылки. Зайдите позже.'
                     ]);
                 }
 
                 if($subscription_paid) {
+                    $inline_keyboard = new InlineKeyboard([
+                        ['text' => "На главную", 'callback_data' => 'menu']
+                    ]);
+
                     Request::sendMessage([
                         'chat_id'      => $chat_id,
-                        'text'         => 'Вы подписаны на рассылку данного каппера. Как только каппер добавит новый прогноз, вы сразу его получите. '.PHP_EOL.'Ваша подписка истекает: '.date('Y-m-d H:i:s', $subscription_end_timestamp)
+                        'text'         => 'Вы подписаны на рассылку. Как только появятся новые сообщения, вы сразу их получите. '.PHP_EOL.'Ваша подписка истекает: '.date('Y-m-d H:i:s', $subscription_end_timestamp),
+                        'reply_markup' => $inline_keyboard
                     ]);
                 }
                 else {
 
                     $inline_keyboard = new InlineKeyboard([
                         ['text' => "Приобрести подписку", 'callback_data' => 'subscription_buy '.$newsletter_category_id],
+                    ],
+                    [
+                        ['text' => "На главную", 'callback_data' => 'menu']
                     ]);
 
                     Request::sendMessage([
                         'chat_id'      => $chat_id,
-                        'text'         => 'Вы можете подписаться и в автоматическом режиме получать все самые свежие прогнозы этого каппера.',
+                        'text'         => 'Вы можете подписаться и в автоматическом режиме получать все самые сообщения этой рассылки.',
                         'reply_markup' => $inline_keyboard
                     ]);
 
@@ -185,8 +196,112 @@ class CallbackqueryCommand extends SystemCommand
                     ]);
                 }
 
+                $inline_keyboard = new InlineKeyboard([
+                    ['text' => "Получить", 'callback_data' => 'subscription_trial'],
+                ]);
+
+                Request::sendMessage([
+                    'chat_id'      => $chat_id,
+                    'text'         => "Пробный период на ".SUBSCRIPTION_TRIAL_DAYS." дней",
+                    'reply_markup' => $inline_keyboard
+                ]);
+
 
                 break;
+
+            case 'subscription_trial':   
+                break;
+
+            case 'newsletter_categories':
+                $newsletter_categories = NewsletterCategoryDB::selectNewsletterCategory();
+
+                foreach ($newsletter_categories as $newsletter_category) {
+                    $images_dir_full_path = __DIR__.'/../images/';
+                    $images_dir = '../images/';
+                    $images = glob($images_dir_full_path.$newsletter_category['id'].'.*');
+                    
+                    if(count($images)) {
+                        // send newsletter_category photo
+                        $result = Request::sendPhoto([
+                            'chat_id' => $chat_id,
+                            'photo'   => Request::encodeFile($images[0]),
+                        ]);
+                    }
+
+                    $text = "Название: ".$newsletter_category['name'].PHP_EOL
+                        ."Описание: ".$newsletter_category['description'];
+
+                    $inline_keyboard = new InlineKeyboard([
+                        ['text' => "Выбрать", 'callback_data' => 'newsletter_category '.$newsletter_category['id']]
+                    ],
+                    [
+                        ['text' => "Назад", 'callback_data' => 'menu']
+                    ]);
+            
+                    Request::sendMessage([
+                        'chat_id' => $chat_id,
+                        'text' => $text,
+                        'reply_markup' => $inline_keyboard
+                    ]);
+                }
+                break;  
+
+            case 'information':
+            case 'statistics':
+                $fields = FieldDB::selectField(null, null, null, $command);
+
+                foreach ($fields as $field) {
+                    if($field['value'] == 'image') {
+                        // field is image
+                        $images_dir_full_path = __DIR__.'/../images/';
+                        $images_dir = '../images/';
+                        $images = glob($images_dir_full_path.'field_'.$field['id'].'.*');
+
+                        if(count($images)) {
+                            // send photo
+                            $result = Request::sendPhoto([
+                                'chat_id' => $chat_id,
+                                'photo'   => Request::encodeFile($images[0]),
+                            ]);
+                        }
+                    } else {
+                        // field is text
+                        Request::sendMessage([
+                            'chat_id' => $chat_id,
+                            'text' => $field['value'],
+                        ]);
+                    }
+
+                   
+                }
+
+                 $inline_keyboard = new InlineKeyboard([
+                    ['text' => "На главную", 'callback_data' => 'menu']
+                ]);
+
+                Request::sendMessage([
+                    'chat_id' => $chat_id,
+                    'text' => "---",
+                    'reply_markup' => $inline_keyboard
+                ]);
+                break;     
+
+            case 'menu':
+                $text = "Добро пожаловать !";
+
+                $inline_keyboard = new InlineKeyboard(
+                    [ ['text' => "Информация", 'callback_data' => 'information'] ],
+                    [ ['text' => "Статистика", 'callback_data' => 'statistics'] ],
+                    [ ['text' => "Пробный период", 'callback_data' => 'trial'] ],
+                    [ ['text' => "Рассылки", 'callback_data' => 'newsletter_categories'] ] 
+                );
+
+                Request::sendMessage([
+                    'chat_id' => $chat_id,
+                    'text' => $text,
+                    'reply_markup' => $inline_keyboard
+                ]);
+                break;     
             
             default:
                 # code...
