@@ -16,13 +16,13 @@ if(!file_exists('config.php')) {
 
 try {
     // Create Telegram API object
-    $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
+    $telegram = new Longman\TelegramBot\Telegram(BOT_API_KEY, BOT_USERNAME);
 
     // Set webhook
-    // $result = $telegram->setWebhook($hook_url);
+    // $result = $telegram->setWebhook(BOT_HOOK_URL);
 
     // To use a self-signed certificate, use this line instead
-    $result = $telegram->setWebhook($hook_url, ['certificate' => $certificate_path]);
+    $result = $telegram->setWebhook(BOT_HOOK_URL, ['certificate' => CERTIFICATE_PATH]);
 
     if ($result->isOk()) {
         echo $result->getDescription();

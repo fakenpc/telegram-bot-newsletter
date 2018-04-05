@@ -28,12 +28,12 @@ if(!file_exists('config.php')) {
 
 try {
     // Create Telegram API object
-    $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
+    $telegram = new Longman\TelegramBot\Telegram(BOT_API_KEY, BOT_USERNAME);
     // Add commands paths containing your custom commands
-    $telegram->addCommandsPaths($commands_paths);
+    $telegram->addCommandsPaths(BOT_COMMANDS_PATH);
     $telegram->enableLimiter();
     // Enable MySQL
-    $telegram->enableMySql($mysql_credentials);
+    $telegram->enableMySql(MYSQL_CREDENTIALS);
 
     if(!DB::isDbConnected()) {
     	print date('Y-m-d H:i:s', time()). " - Can't connect to mysql database. \n";

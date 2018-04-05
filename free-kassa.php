@@ -24,12 +24,12 @@ if(!file_exists('config.php')) {
 
 try {
     // Create Telegram API object
-    $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
+    $telegram = new Longman\TelegramBot\Telegram(BOT_API_KEY, BOT_USERNAME);
     // Add commands paths containing your custom commands
-    $telegram->addCommandsPaths($commands_paths);
+    $telegram->addCommandsPaths(BOT_COMMANDS_PATH);
     $telegram->enableLimiter();
     // Enable MySQL
-    $telegram->enableMySql($mysql_credentials);
+    $telegram->enableMySql(MYSQL_CREDENTIALS);
 
     if(!DB::isDbConnected()) {
     	print date('Y-m-d H:i:s', time()). " - Can't connect to mysql database. \n";
@@ -40,7 +40,7 @@ try {
 		die("hacking attempt!");
 	}
 
-	$sign = md5($merchant_id.':'.$_REQUEST['AMOUNT'].':'.$merchant_secret_response.':'.$_REQUEST['MERCHANT_ORDER_ID']);
+	$sign = md5(MERCHANT_ID.':'.$_REQUEST['AMOUNT'].':'.MERCHANT_SECRET_RESPONSE.':'.$_REQUEST['MERCHANT_ORDER_ID']);
 
 	if ($sign != $_REQUEST['SIGN']) {
 		die('wrong sign');

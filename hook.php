@@ -20,18 +20,18 @@ if(!file_exists('config.php')) {
 
 try {
     // Create Telegram API object
-    $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
+    $telegram = new Longman\TelegramBot\Telegram(BOT_API_KEY, BOT_USERNAME);
 
     // Add commands paths containing your custom commands
-    $telegram->addCommandsPaths($commands_paths);
+    $telegram->addCommandsPaths(BOT_COMMANDS_PATH);
 
     // Enable MySQL
-    $telegram->enableMySql($mysql_credentials);
+    $telegram->enableMySql(MYSQL_CREDENTIALS);
 
     // Logging (Error, Debug and Raw Updates)
-    //Longman\TelegramBot\TelegramLog::initErrorLog(__DIR__ . "/{$bot_username}_error.log");
-    //Longman\TelegramBot\TelegramLog::initDebugLog(__DIR__ . "/{$bot_username}_debug.log");
-    //Longman\TelegramBot\TelegramLog::initUpdateLog(__DIR__ . "/{$bot_username}_update.log");
+    //Longman\TelegramBot\TelegramLog::initErrorLog(__DIR__ . "/{BOT_USERNAME}_error.log");
+    //Longman\TelegramBot\TelegramLog::initDebugLog(__DIR__ . "/{BOT_USERNAME}_debug.log");
+    //Longman\TelegramBot\TelegramLog::initUpdateLog(__DIR__ . "/{BOT_USERNAME}_update.log");
 
     // If you are using a custom Monolog instance for logging, use this instead of the above
     //Longman\TelegramBot\TelegramLog::initialize($your_external_monolog_instance);

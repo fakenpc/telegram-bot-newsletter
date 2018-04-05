@@ -170,13 +170,12 @@ class CallbackqueryCommand extends SystemCommand
                 
             case 'subscription_buy':
                 $newsletter_category_id = $command_data;
-                global $bot_url;
 
                 $subscriptions = SubscriptionDB::selectSubscription();
 
                 foreach ($subscriptions as $subscription) {
                     $inline_keyboard = new InlineKeyboard([
-                        ['text' => "Оплатить", 'url' => $bot_url.'free-kassa-form.php?user_id='.$user_id.'&chat_id='.$chat_id.'&newsletter_category_id='.$newsletter_category_id.'&subscription_id='.$subscription['id']],
+                        ['text' => "Оплатить", 'url' => BOT_URL.'free-kassa-form.php?user_id='.$user_id.'&chat_id='.$chat_id.'&newsletter_category_id='.$newsletter_category_id.'&subscription_id='.$subscription['id']],
                     ]);
 
                     Request::sendMessage([

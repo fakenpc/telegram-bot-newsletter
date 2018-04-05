@@ -18,7 +18,7 @@ if(!file_exists('config.php')) {
 
 try {
     // Create Telegram API object
-    $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
+    $telegram = new Longman\TelegramBot\Telegram(BOT_API_KEY, BOT_USERNAME);
 
     // Delete webhook
     $result = $telegram->deleteWebhook();

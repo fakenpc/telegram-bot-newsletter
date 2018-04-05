@@ -27,12 +27,25 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="index.php">Панель управление ботом</a>
+					<a class="navbar-brand" href="index.php"><span class="glyphicon glyphicon-home"></span> </a>
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
-						<li><a href="index.php">Главная страница</a></li>
-						<li><a href="send-messages-to-users.php">Рассылка пользователям</a></li>
+						<li>
+							<a href="statistics-edit.php">
+								<span class="glyphicon glyphicon-edit"></span> Кнопка Статистика
+							</a>
+						</li>
+						<li>
+							<a href="information-edit.php">
+								<span class="glyphicon glyphicon-edit"></span> Кнопка Информация
+							</a>
+						</li>
+						<li>
+							<a href="send-messages-to-users.php">
+								<span class="glyphicon glyphicon-envelope"></span> Рассылка пользователям
+							</a>
+						</li>
 					</ul>
 				</div>
 			</div>

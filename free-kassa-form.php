@@ -24,12 +24,12 @@ if(!file_exists('config.php')) {
 
 try {
     // Create Telegram API object
-    $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
+    $telegram = new Longman\TelegramBot\Telegram(BOT_API_KEY, BOT_USERNAME);
     // Add commands paths containing your custom commands
-    $telegram->addCommandsPaths($commands_paths);
+    $telegram->addCommandsPaths(BOT_COMMANDS_PATH);
     $telegram->enableLimiter();
     // Enable MySQL
-    $telegram->enableMySql($mysql_credentials);
+    $telegram->enableMySql(MYSQL_CREDENTIALS);
 
     if(!DB::isDbConnected()) {
     	print date('Y-m-d H:i:s', time()). " - Can't connect to mysql database. \n";
@@ -43,11 +43,11 @@ try {
 		$newsletter_category = $newsletter_categories[0];
 		$subscriber_id = SubscriberDB::insertSubscriber($_GET['newsletter_category_id'], $_GET['subscription_id'], $_GET['user_id'], $_GET['chat_id'], time(), time() + $subscription['duration'], 0);
 
-		$hash = md5($merchant_id.":".$subscription['price'].":".$merchant_secret_form.":".$subscriber_id);
+		$hash = md5(MERCHANT_ID.":".$subscription['price'].":".MERCHANT_SECRET_FORM.":".$subscriber_id);
 		
 		print '
 		<form method=GET action="http://www.free-kassa.ru/merchant/cash.php">
-		    <input type="hidden" name="m" value="'.$merchant_id.'">
+		    <input type="hidden" name="m" value="'.MERCHANT_ID.'">
 		    <input type="hidden" name="oa" value="'.$subscription['price'].'">
 		    <input type="hidden" name="s" value="'.$hash.'">
 		    <input type="hidden" name="o" value="'.$subscriber_id.'">

@@ -28,10 +28,10 @@
 
 						try {
 						    // Create Telegram API object
-						    $telegram = new Longman\TelegramBot\Telegram($bot_api_key, $bot_username);
+						    $telegram = new Longman\TelegramBot\Telegram(BOT_API_KEY, BOT_USERNAME);
 
 						    // Enable MySQL
-    						$telegram->enableMySql($mysql_credentials);
+    						$telegram->enableMySql(MYSQL_CREDENTIALS);
 
     						if(isset($_GET['remove_newsletter_id'])) {
     							NewsletterDB::deleteNewsletter($_GET['remove_newsletter_id']);
