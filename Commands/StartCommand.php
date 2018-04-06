@@ -70,7 +70,7 @@ class StartCommand extends SystemCommand
 		$message = $this->getMessage();
 		$chat_id = $message->getChat()->getId();
 		
-		$text = "Добро пожаловать !";
+		$text = "Меню";
 
         $inline_keyboard = new InlineKeyboard(
             [ ['text' => "Информация", 'callback_data' => 'information'] ],
