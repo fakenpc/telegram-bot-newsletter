@@ -22,11 +22,13 @@ require_once __DIR__.'/../SubscriptionDB.php';
 require_once __DIR__.'/../NewsletterCategoryDB.php';
 require_once __DIR__.'/../NewsletterDB.php';
 require_once __DIR__.'/../FieldDB.php';
+require_once __DIR__.'/../TrialDB.php';
 use SubscriberDB;
 use SubscriptionDB;
 use NewsletterCategoryDB;
 use NewsletterDB;
 use FieldDB;
+use TrialDB;
 
 /**
  * Callback query command
@@ -91,6 +93,7 @@ class CallbackqueryCommand extends SystemCommand
         SubscriptionDB::initializeSubscription();
         NewsletterCategoryDB::initializeNewsletterCategory();
         FieldDB::initializeField();
+        TrialDB::initializeTrial();
 
         switch ($command) {
 
@@ -130,9 +133,16 @@ class CallbackqueryCommand extends SystemCommand
                         }
 
                         if($subscription_paid) {
-                            $text = 'Название: '.PHP_EOL.$newsletter['name'].PHP_EOL.$newsletter['description'];
+                            $text = 'Рассылка #'.$newsletter['id'].': '.PHP_EOL;
+                            $text .= $newsletter['name'].PHP_EOL;
+                            $text .= $newsletter['description'].PHP_EOL;
                         } else {
-                            $text = 'Название: '.PHP_EOL.$newsletter['name'];
+                            $text = 'Рассылка #'.$newsletter['id'].': '.PHP_EOL;
+                            $text .= $newsletter['name'].PHP_EOL;
+                            if(!empty(trim($newsletter['description']))) {
+                                $text .= PHP_EOL."\xE2\x9D\x95 Эта рассылка содержит скрытую часть, видимую только подписчикам.".PHP_EOL;
+
+                            }
                         }
 
                         Request::sendMessage([
@@ -150,24 +160,24 @@ class CallbackqueryCommand extends SystemCommand
                 }
 
                 if($subscription_paid) {
-                    $inline_keyboard = new InlineKeyboard([
-                        ['text' => "На главную", 'callback_data' => 'menu']
-                    ]);
+                    /*$inline_keyboard = new InlineKeyboard([
+                        ['text' => "\xF0\x9F\x94\x99 На главную", 'callback_data' => 'menu']
+                    ]);*/
 
                     Request::sendMessage([
                         'chat_id'      => $chat_id,
                         'text'         => 'Вы подписаны на рассылку. Как только появятся новые сообщения, вы сразу их получите. '.PHP_EOL.'Ваша подписка истекает: '.date('Y-m-d H:i:s', $subscription_end_timestamp),
-                        'reply_markup' => $inline_keyboard
+                        //'reply_markup' => $inline_keyboard
                     ]);
                 }
                 else {
 
                     $inline_keyboard = new InlineKeyboard([
                         ['text' => "Приобрести подписку", 'callback_data' => 'subscription_buy '.$newsletter_category_id],
-                    ],
+                    ]/*,
                     [
-                        ['text' => "На главную", 'callback_data' => 'menu']
-                    ]);
+                        ['text' => "\xF0\x9F\x94\x99 На главную", 'callback_data' => 'menu']
+                    ]*/);
 
                     Request::sendMessage([
                         'chat_id'      => $chat_id,
@@ -197,7 +207,7 @@ class CallbackqueryCommand extends SystemCommand
                 }
 
                 $inline_keyboard = new InlineKeyboard([
-                    ['text' => "Получить", 'callback_data' => 'subscription_trial'],
+                    ['text' => "Получить", 'callback_data' => 'subscription_trial '.$newsletter_category_id],
                 ]);
 
                 Request::sendMessage([
@@ -209,99 +219,45 @@ class CallbackqueryCommand extends SystemCommand
 
                 break;
 
-            case 'subscription_trial':   
-                break;
+            case 'subscription_trial':
+                $newsletter_category_id = $command_data;
+                $trials = TrialDB::selectTrial(null, $user_id);
+                
+                $trial_alreay_used = (bool)count($trials);
+                
+                if($trial_alreay_used) {
+                    /*$inline_keyboard = new InlineKeyboard([
+                        ['text' => "\xF0\x9F\x94\x99 На главную", 'callback_data' => 'menu']
+                    ]);*/
 
-            case 'newsletter_categories':
-                $newsletter_categories = NewsletterCategoryDB::selectNewsletterCategory();
-
-                foreach ($newsletter_categories as $newsletter_category) {
-                    $images_dir_full_path = __DIR__.'/../images/';
-                    $images_dir = '../images/';
-                    $images = glob($images_dir_full_path.$newsletter_category['id'].'.*');
-                    
-                    if(count($images)) {
-                        // send newsletter_category photo
-                        $result = Request::sendPhoto([
-                            'chat_id' => $chat_id,
-                            'photo'   => Request::encodeFile($images[0]),
-                        ]);
-                    }
-
-                    $text = "Название: ".$newsletter_category['name'].PHP_EOL
-                        ."Описание: ".$newsletter_category['description'];
-
-                    $inline_keyboard = new InlineKeyboard([
-                        ['text' => "Выбрать", 'callback_data' => 'newsletter_category '.$newsletter_category['id']]
-                    ],
-                    [
-                        ['text' => "Назад", 'callback_data' => 'menu']
-                    ]);
-            
                     Request::sendMessage([
                         'chat_id' => $chat_id,
-                        'text' => $text,
-                        'reply_markup' => $inline_keyboard
+                        'text' => "Вы уже воспользовались пробным периодом.",
+                        //'reply_markup' => $inline_keyboard
                     ]);
-                }
-                break;  
+                } else {
+                    $subscriptions = SubscriptionDB::selectSubscription();
+                    $subscription_id =1;
 
-            case 'information':
-            case 'statistics':
-                $fields = FieldDB::selectField(null, null, null, $command);
-
-                foreach ($fields as $field) {
-                    if($field['value'] == 'image') {
-                        // field is image
-                        $images_dir_full_path = __DIR__.'/../images/';
-                        $images_dir = '../images/';
-                        $images = glob($images_dir_full_path.'field_'.$field['id'].'.*');
-
-                        if(count($images)) {
-                            // send photo
-                            $result = Request::sendPhoto([
-                                'chat_id' => $chat_id,
-                                'photo'   => Request::encodeFile($images[0]),
-                            ]);
-                        }
-                    } else {
-                        // field is text
-                        Request::sendMessage([
-                            'chat_id' => $chat_id,
-                            'text' => $field['value'],
-                        ]);
+                    if(count($subscriptions)) {
+                        $subscription_id = $subscriptions[0]['id'];
                     }
 
-                   
+                    $subscriber_id = SubscriberDB::insertSubscriber($newsletter_category_id, $subscription_id, $user_id, $chat_id, time(), time() + SUBSCRIPTION_TRIAL_DAYS * 24 * 60 * 60, 1);
+                    TrialDB::insertTrial($user_id, 1);
+
+                    /*$inline_keyboard = new InlineKeyboard([
+                        ['text' => "\xF0\x9F\x94\x99 На главную", 'callback_data' => 'menu']
+                    ]);*/
+
+                    Request::sendMessage([
+                        'chat_id' => $chat_id,
+                        'text' => "Вы успешно подписались.",
+                        //'reply_markup' => $inline_keyboard
+                    ]);
                 }
 
-                 $inline_keyboard = new InlineKeyboard([
-                    ['text' => "На главную", 'callback_data' => 'menu']
-                ]);
-
-                Request::sendMessage([
-                    'chat_id' => $chat_id,
-                    'text' => "---",
-                    'reply_markup' => $inline_keyboard
-                ]);
-                break;     
-
-            case 'menu':
-                $text = "Добро пожаловать !";
-
-                $inline_keyboard = new InlineKeyboard(
-                    [ ['text' => "Информация", 'callback_data' => 'information'] ],
-                    [ ['text' => "Статистика", 'callback_data' => 'statistics'] ],
-                    [ ['text' => "Пробный период", 'callback_data' => 'trial'] ],
-                    [ ['text' => "Рассылки", 'callback_data' => 'newsletter_categories'] ] 
-                );
-
-                Request::sendMessage([
-                    'chat_id' => $chat_id,
-                    'text' => $text,
-                    'reply_markup' => $inline_keyboard
-                ]);
-                break;     
+                break; 
             
             default:
                 # code...

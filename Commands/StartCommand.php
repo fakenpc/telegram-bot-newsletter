@@ -16,6 +16,7 @@ require_once __DIR__.'/../NewsletterCategoryDB.php';
 use Longman\TelegramBot\Commands\SystemCommand;
 use Longman\TelegramBot\Request;
 use Longman\TelegramBot\Entities\InlineKeyboard;
+use Longman\TelegramBot\Entities\Keyboard;
 use SubscriberDB;
 use NewsletterCategoryDB;
 
@@ -70,19 +71,18 @@ class StartCommand extends SystemCommand
 		$message = $this->getMessage();
 		$chat_id = $message->getChat()->getId();
 		
-		$text = "Меню";
-
-        $inline_keyboard = new InlineKeyboard(
-            [ ['text' => "Информация", 'callback_data' => 'information'] ],
-            [ ['text' => "Статистика", 'callback_data' => 'statistics'] ],
-            [ ['text' => "Пробный период", 'callback_data' => 'trial'] ],
-            [ ['text' => "Рассылки", 'callback_data' => 'newsletter_categories'] ] 
-        );
+        $keyboard = new Keyboard([
+            'keyboard' => [ 
+                [ ['text' => "\xE2\x9D\x94 Информация"], ['text' => "\xE2\x9D\x95 Статистика"] ], 
+                ['text' => "\xE2\x9C\x89 Рассылки"], 
+            ],
+            'resize_keyboard' => true
+        ]);
 
         Request::sendMessage([
             'chat_id' => $chat_id,
             'text' => $text,
-            'reply_markup' => $inline_keyboard
+            'reply_markup' => $keyboard
         ]);
 
 		return true;
