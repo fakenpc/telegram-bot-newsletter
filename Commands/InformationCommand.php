@@ -97,19 +97,18 @@ class InformationCommand extends SystemCommand
                     'text' => $field['value'],
                 ]);
             }
-
            
         }
 
         /*$inline_keyboard = new InlineKeyboard([
             ['text' => "\xF0\x9F\x94\x99 На главную", 'callback_data' => 'menu']
-        ]);*/
+        ]);
 
         Request::sendMessage([
             'chat_id' => $chat_id,
             'text' => "---",
             //'reply_markup' => $inline_keyboard
-        ]);
+        ]);*/
 
 		return true;
 	}

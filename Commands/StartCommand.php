@@ -70,6 +70,8 @@ class StartCommand extends SystemCommand
 
 		$message = $this->getMessage();
 		$chat_id = $message->getChat()->getId();
+
+        $text = "Доброго времени суток !";
 		
         $keyboard = new Keyboard([
             'keyboard' => [ 

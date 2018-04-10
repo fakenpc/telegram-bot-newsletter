@@ -181,7 +181,7 @@ class CallbackqueryCommand extends SystemCommand
 
                     Request::sendMessage([
                         'chat_id'      => $chat_id,
-                        'text'         => 'Вы можете подписаться и в автоматическом режиме получать все самые сообщения этой рассылки.',
+                        'text'         => 'Вы можете подписаться и в автоматическом режиме получать все самые свежие сообщения этой рассылки.',
                         'reply_markup' => $inline_keyboard
                     ]);
 
