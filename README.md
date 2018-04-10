@@ -26,7 +26,7 @@ chmod u+x /path/to/bot-dir/cron-run-bot.sh
   * Установить self-signed сертификат на сервер.
   * Указать путь до публичного ключа в config.php
   * Запустить set.php
-9. Поставить на крон, выполняться каждую минуту файл cron_send_forecasts.php
+9. Поставить на крон, выполняться каждую минуту файл cron-send-out-a-newsletter.php
 ```
 php /path/to/bot-dir/cron-send-out-a-newsletter.php
 ```
