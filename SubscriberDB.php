@@ -135,7 +135,7 @@ class SubscriberDB extends DB
         }
     }
 
-    public function selectActiveSubscriber($id = null, $newsletter_category_id = null, $subscription_id = null, $user_id = null, $chat_id = null, $start_timestamp = null, $paid = null, $limit = null) 
+    public static function selectActiveSubscriber($id = null, $newsletter_category_id = null, $subscription_id = null, $user_id = null, $chat_id = null, $start_timestamp = null, $paid = null, $limit = null) 
     {
         if (!self::isDbConnected()) {
             return false;
