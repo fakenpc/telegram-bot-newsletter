@@ -1,5 +1,5 @@
 <?php
-
+header('Content-Type: text/html; charset=utf-8');
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__.'/NewsletterCategoryDB.php';
 require_once __DIR__.'/UserDB.php';
