@@ -36,24 +36,30 @@ try {
     }
 
     $subscriptions = SubscriptionDB::selectSubscription($_GET['subscription_id']);
-    $newsletter_categories = NewsletterCategoryDB::selectNewsletterCategory($_GET['newsletter_category_id']);
+    
 
-	if(count($subscriptions) && count($newsletter_categories)) {
+	if(count($subscriptions)) {
 		$subscription = $subscriptions[0];
-		$newsletter_category = $newsletter_categories[0];
-		$subscriber_id = SubscriberDB::insertSubscriber($_GET['newsletter_category_id'], $_GET['subscription_id'], $_GET['user_id'], $_GET['chat_id'], time(), time() + $subscription['duration'], 0);
-
-		$hash = md5(MERCHANT_ID.":".$subscription['price'].":".MERCHANT_SECRET_FORM.":".$subscriber_id);
+		$newsletter_categories = NewsletterCategoryDB::selectNewsletterCategory($subscription['newsletter_category_id']);
 		
-		print '
-		<form method=GET action="http://www.free-kassa.ru/merchant/cash.php">
-		    <input type="hidden" name="m" value="'.MERCHANT_ID.'">
-		    <input type="hidden" name="oa" value="'.$subscription['price'].'">
-		    <input type="hidden" name="s" value="'.$hash.'">
-		    <input type="hidden" name="o" value="'.$subscriber_id.'">
-		    <input type="submit" value="Оплатить">
-		</form>
-		';
+		if(count($newsletter_categories)) {
+			$newsletter_category = $newsletter_categories[0];
+			$subscriber_id = SubscriberDB::insertSubscriber($newsletter_category['id'], $_GET['subscription_id'], $_GET['user_id'], $_GET['chat_id'], time(), time() + $subscription['duration'], 0);
+
+			$hash = md5(MERCHANT_ID.":".$subscription['price'].":".MERCHANT_SECRET_FORM.":".$subscriber_id);
+			
+			print '
+			<form method=GET action="http://www.free-kassa.ru/merchant/cash.php">
+			    <input type="hidden" name="m" value="'.MERCHANT_ID.'">
+			    <input type="hidden" name="oa" value="'.$subscription['price'].'">
+			    <input type="hidden" name="s" value="'.$hash.'">
+			    <input type="hidden" name="o" value="'.$subscriber_id.'">
+			    <input type="submit" value="Оплатить">
+			</form>
+			';
+		}
+
+		
 	} else {
 		print 'Такой подписки не существует.';
 	}

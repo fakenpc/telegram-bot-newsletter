@@ -172,18 +172,15 @@ class CallbackqueryCommand extends SystemCommand
                 }
                 else {
 
-                    $inline_keyboard = new InlineKeyboard([
+                    /*$inline_keyboard = new InlineKeyboard([
                         ['text' => "Приобрести подписку", 'callback_data' => 'subscription_buy '.$newsletter_category_id],
-                    ]/*,
-                    [
-                        ['text' => "\xF0\x9F\x94\x99 На главную", 'callback_data' => 'menu']
-                    ]*/);
+                    ]);
 
                     Request::sendMessage([
                         'chat_id'      => $chat_id,
                         'text'         => 'Вы можете подписаться и в автоматическом режиме получать все самые свежие сообщения этой рассылки.',
                         'reply_markup' => $inline_keyboard
-                    ]);
+                    ]);*/
 
                 }
 
@@ -196,7 +193,7 @@ class CallbackqueryCommand extends SystemCommand
 
                 foreach ($subscriptions as $subscription) {
                     $inline_keyboard = new InlineKeyboard([
-                        ['text' => "Оплатить", 'url' => BOT_URL.'free-kassa-form.php?user_id='.$user_id.'&chat_id='.$chat_id.'&newsletter_category_id='.$newsletter_category_id.'&subscription_id='.$subscription['id']],
+                        ['text' => "Оплатить", 'url' => BOT_URL.'free-kassa-form.php?user_id='.$user_id.'&chat_id='.$chat_id.'&subscription_id='.$subscription['id']],
                     ]);
 
                     Request::sendMessage([
@@ -221,7 +218,7 @@ class CallbackqueryCommand extends SystemCommand
 
             case 'subscription_trial':
                 $newsletter_category_id = $command_data;
-                $trials = TrialDB::selectTrial(null, $user_id);
+                $trials = TrialDB::selectTrial(null, $user_id, $newsletter_category_id);
                 
                 $trial_alreay_used = (bool)count($trials);
                 
@@ -244,7 +241,7 @@ class CallbackqueryCommand extends SystemCommand
                     }
 
                     $subscriber_id = SubscriberDB::insertSubscriber($newsletter_category_id, $subscription_id, $user_id, $chat_id, time(), time() + SUBSCRIPTION_TRIAL_DAYS * 24 * 60 * 60, 1);
-                    TrialDB::insertTrial($user_id, 1);
+                    TrialDB::insertTrial($user_id, $newsletter_category_id, 1);
 
                     /*$inline_keyboard = new InlineKeyboard([
                         ['text' => "\xF0\x9F\x94\x99 На главную", 'callback_data' => 'menu']

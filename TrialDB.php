@@ -31,7 +31,7 @@ class TrialDB extends DB
      * @return array|bool
      * @throws TelegramException
      */
-    public static function selectTrial($id = null, $user_id = null, $used = null, $limit = null)
+    public static function selectTrial($id = null, $user_id = null, $newsletter_category_id = null, $used = null, $limit = null)
     {
         if (!self::isDbConnected()) {
             return false;
@@ -58,6 +58,10 @@ class TrialDB extends DB
                 $where[] = '`user_id` = :user_id';
             }
 
+            if($newsletter_category_id !== null) {
+                $where[] = '`newsletter_category_id` = :newsletter_category_id';
+            }
+
             if($used !== null) {
                 $where[] = '`used` = :used';
             }
@@ -78,6 +82,10 @@ class TrialDB extends DB
 
             if($user_id !== null) {
                 $sth->bindValue(':user_id', $user_id);
+            }
+
+            if($newsletter_category_id !== null) {
+                $sth->bindValue(':newsletter_category_id', $newsletter_category_id);
             }
 
             if($used !== null) {
@@ -108,7 +116,7 @@ class TrialDB extends DB
      * @return string last insert id
      * @throws TelegramException
      */
-    public static function insertTrial($user_id, $used)
+    public static function insertTrial($user_id, $newsletter_category_id, $used)
     {
         if (!self::isDbConnected()) {
             return false;
@@ -116,14 +124,15 @@ class TrialDB extends DB
 
         try {
             $sth = self::$pdo->prepare('INSERT INTO `' . TB_TRIAL . '`
-                (`user_id`, `used`)
+                (`user_id`,`newsletter_category_id`, `used`)
                 VALUES
-                (:user_id, :used)
+                (:user_id, :newsletter_category_id, :used)
             ');
 
             // $date = self::getTimestamp();
 
             $sth->bindValue(':user_id', $user_id);
+            $sth->bindValue(':newsletter_category_id', $newsletter_category_id);
             $sth->bindValue(':used', $used);
 
             $sth->execute();

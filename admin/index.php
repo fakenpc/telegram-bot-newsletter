@@ -38,10 +38,6 @@
 							if(isset($_GET['remove_newsletter_category_id'])) {
 								NewsletterCategoryDB::deleteNewsletterCategory($_GET['remove_newsletter_category_id']);
 							}
-
-							if(isset($_GET['remove_subscription_id'])) {
-								SubscriptionDB::deleteSubscription($_GET['remove_subscription_id']);
-							}
 		
 							print '<h1 class="page-header">Рассылки [<a href="newsletter-category-edit.php">+</a>]</h1>';
 							print '<div class="row placeholders">';
