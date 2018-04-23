@@ -46,7 +46,7 @@
 
 							foreach ($newsletter_categories as $newsletter_category) {
 								$images = glob($images_dir.$newsletter_category['id'].'.*');
-								$image_src = count($images) ? $images_dir.current($images) : $images_dir.'404.jpg';
+								$image_src = count($images) ? $images_dir.current($images).'?cache-off='.time() : $images_dir.'404.jpg';
 								
 								print '
 									<div class="col-xs-6 col-sm-3 placeholder">
