@@ -37,7 +37,7 @@
 									NewsletterCategoryDB::updateNewsletterCategory(['name' => $_POST['name'], 'description' => $_POST['description'], 'allow_trial' => $_POST['allow_trial'], 'trial_duration' => ($_POST['trial_duration'] * 24 * 60 * 60)], ['id' => $newsletter_category_id]);
 								// if add newsletter_category
 								} else {
-									$newsletter_category_id = NewsletterCategoryDB::insertNewsletterCategory($_POST['name'], $_POST['description'], $_POST['allow_trial'], $_POST['trial_duration']);
+									$newsletter_category_id = NewsletterCategoryDB::insertNewsletterCategory($_POST['name'], $_POST['description'], $_POST['allow_trial'], ($_POST['trial_duration'] * 24 * 60 * 60));
 								}
 
 								if($newsletter_category_id) {
