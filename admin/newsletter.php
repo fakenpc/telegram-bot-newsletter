@@ -44,11 +44,14 @@
 							if(count($newsletter_categories)) {
 								$newsletter_category = $newsletter_categories[0];
 
+								$images = glob($images_dir.$newsletter_category['id'].'.*');
+								$image_src = count($images) ? $images_dir.current($images).'?cache-off='.time() : $images_dir.'404.jpg';
+
 								print '
 								<div class="row placeholders">
 									<div class="col-xs-12 col-sm-6 placeholder">
 										<a href="newsletter-category-edit.php?id='.$newsletter_category['id'].'">
-											<img src="'.$images_dir.current(glob($images_dir.$newsletter_category['id'].'.*')).'" class="img-responsive" alt="Generic placeholder thumbnail">
+											<img src="'.$image_src.'" class="img-responsive" alt="Generic placeholder thumbnail">
 										</a>
 										<h4>'.$newsletter_category['name'].'</h4>
 										<span class="text-muted">'.$newsletter_category['description'].'</span>
