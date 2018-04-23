@@ -45,10 +45,13 @@
 							$newsletter_categories = NewsletterCategoryDB::selectNewsletterCategory();
 
 							foreach ($newsletter_categories as $newsletter_category) {
+								$images = glob($images_dir.$newsletter_category['id'].'.*');
+								$image_src = count($images) ? $images_dir.current($images) : $images_dir.'404.jpg';
+								
 								print '
 									<div class="col-xs-6 col-sm-3 placeholder">
 										<a href="newsletter-category-edit.php?id='.$newsletter_category['id'].'">
-											<img src="'.$images_dir.current(glob($images_dir.$newsletter_category['id'].'.*')).'" class="img-responsive" alt="Generic placeholder thumbnail">
+											<img src="'.$image_src.'" class="img-responsive" alt="Generic placeholder thumbnail">
 										</a>
 										<h4>'.$newsletter_category['name'].'</h4>
 										<span class="text-muted">'.$newsletter_category['description'].'</span><br>
