@@ -170,7 +170,7 @@
 											</div>
 											<div class="form-group">
 												<label for="description">Продолжительность пробного периода (дни)</label>
-												<input type="number" class="form-control" name="trial_duration" placeholder="Дней" value="'.$trial_duration.'">
+												<input type="number" min="0" step="1" class="form-control" name="trial_duration" placeholder="Дней" value="'.$trial_duration.'">
 											</div>
 											<div class="form-group">
 												<label for="image">Изображение</label>
