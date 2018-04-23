@@ -100,7 +100,9 @@ class NewslettercategoriesCommand extends SystemCommand
 						'url' => BOT_URL.'free-kassa-form.php?user_id='.$user_id.'&chat_id='.$chat_id.'&subscription_id='.$subscription['id']]];
 			}
 
-			$buttons[] = [['text' => "Пробный период (".SUBSCRIPTION_TRIAL_DAYS." дней)", 'callback_data' => 'subscription_trial '.$newsletter_category['id']]];
+			if($newsletter_category['allow_trial']) {
+				$buttons[] = [['text' => "Пробный период (".($newsletter_category['trial_duration'] / 24 / 60 / 60)." дней)", 'callback_data' => 'subscription_trial '.$newsletter_category['id']]];
+			}
 			$buttons[] = [['text' => "Выбрать", 'callback_data' => 'newsletter_category '.$newsletter_category['id']]];
 
 			$inline_keyboard = new InlineKeyboard(['inline_keyboard' => $buttons]);

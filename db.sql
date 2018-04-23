@@ -31,7 +31,9 @@ DROP TABLE IF EXISTS `newsletter_category`;
 CREATE TABLE `newsletter_category` (
   `id` int(11) NOT NULL,
   `name` text COLLATE utf8mb4_unicode_520_ci,
-  `description` text COLLATE utf8mb4_unicode_520_ci
+  `description` text COLLATE utf8mb4_unicode_520_ci,
+  `allow_trial` tinyint(1) NOT NULL DEFAULT '1',
+  `trial_duration` int(11) NOT NULL DEFAULT '864000'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 DROP TABLE IF EXISTS `newsletter_sended`;

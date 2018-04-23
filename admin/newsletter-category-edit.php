@@ -34,10 +34,10 @@
 								// if edit newsletter_category
 								if(isset($_GET['id'])) {
 									$newsletter_category_id = intval($_GET['id']);
-									NewsletterCategoryDB::updateNewsletterCategory(['name' => $_POST['name'], 'description' => $_POST['description']], ['id' => $newsletter_category_id]);
+									NewsletterCategoryDB::updateNewsletterCategory(['name' => $_POST['name'], 'description' => $_POST['description'], 'allow_trial' => $_POST['allow_trial'], 'trial_duration' => ($_POST['trial_duration'] * 24 * 60 * 60)], ['id' => $newsletter_category_id]);
 								// if add newsletter_category
 								} else {
-									$newsletter_category_id = NewsletterCategoryDB::insertNewsletterCategory($_POST['name'], $_POST['description']);
+									$newsletter_category_id = NewsletterCategoryDB::insertNewsletterCategory($_POST['name'], $_POST['description'], $_POST['allow_trial'], $_POST['trial_duration']);
 								}
 
 								if($newsletter_category_id) {
@@ -130,6 +130,8 @@
 							$id = '';
 							$name = '';
 							$description = '';
+							$allow_trial = 0;
+							$trial_duration = 10;
 
 							// edit newsletter_category
 							if(isset($_GET['id'])) {
@@ -140,6 +142,8 @@
 									$id = $newsletter_category['id'];
 									$name = $newsletter_category['name'];;
 									$description = $newsletter_category['description'];;
+									$allow_trial = $newsletter_category['allow_trial'];;
+									$trial_duration = $newsletter_category['trial_duration'] / 24 / 60 / 60;
 								}
 								
 							
@@ -156,6 +160,17 @@
 											<div class="form-group">
 												<label for="description">Описание</label>
 												<textarea class="form-control" rows="5" name="description" placeholder="Описание">'.$description.'</textarea>
+											</div>
+											<div class="form-group">
+												<label for="description">Возможность пробного периода</label>
+												<select class="form-control" name="allow_trial">
+													<option value="0" '.(!$allow_trial ? 'selected' : '').'>Нет</option>
+													<option value="1" '.($allow_trial ? 'selected' : '').'>Да</option>
+												</select>
+											</div>
+											<div class="form-group">
+												<label for="description">Продолжительность пробного периода (дни)</label>
+												<input type="number" class="form-control" name="trial_duration" placeholder="Дней" value="'.$trial_duration.'">
 											</div>
 											<div class="form-group">
 												<label for="image">Изображение</label>

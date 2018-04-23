@@ -87,7 +87,7 @@ class NewsletterCategoryDB extends DB
      * @return string last insert id
      * @throws TelegramException
      */
-    public static function insertNewsletterCategory($name, $description)
+    public static function insertNewsletterCategory($name, $description, $allow_trial, $trial_duration)
     {
         if (!self::isDbConnected()) {
             return false;
@@ -95,15 +95,17 @@ class NewsletterCategoryDB extends DB
 
         try {
             $sth = self::$pdo->prepare('INSERT INTO `' . TB_NEWSLETTER_CATEGORY . '`
-                (`name`, `description`)
+                (`name`, `allow_trial`, `trial_duration`, `description`)
                 VALUES
-                (:name, :description)
+                (:name, :allow_trial, :trial_duration, :description)
             ');
 
             // $date = self::getTimestamp();
 
             $sth->bindValue(':name', $name);
             $sth->bindValue(':description', $description);
+            $sth->bindValue(':allow_trial', $allow_trial);
+            $sth->bindValue(':trial_duration', $trial_duration);
 
             $sth->execute();
 
