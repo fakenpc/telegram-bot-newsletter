@@ -60,6 +60,7 @@
 											<a href="newsletter-category-edit.php?id='.$newsletter_category['id'].'">Изменить</a> 
 											<a href="index.php?remove_newsletter_category_id='.$newsletter_category['id'].'">Удалить</a> 
 											<a href="newsletter.php?newsletter_category_id='.$newsletter_category['id'].'">Содержимое ('.count(NewsletterDB::selectNewsletter(null, $newsletter_category['id'])).')</a>
+											<a href="subscriptions.php?newsletter_category_id='.$newsletter_category['id'].'">Тарифы ('.count(SubscriptionDB::selectSubscription(null, $newsletter_category['id'])).')</a> 
 										</span>
 									</div>
 								';
@@ -146,48 +147,7 @@
 								</div>
 							';
 
-							print '<h2 class="sub-header">Виды подписок на рассылки [<a href="subscription-edit.php">+</a>]</h2>
-								<div class="table-responsive">
-									<table class="table table-striped">
-										<thead>
-											<tr>
-												<th>#</th>
-												<th>Название</th>
-												<th>Длителньость</th>
-												<th>Цена</th>
-												<th>Редактировать</th>
-											</tr>
-										</thead>
-										<tbody>
-							';
-
-
-							$subscriptions = SubscriptionDB::selectSubscription();
-
-							foreach ($subscriptions as $subscription) {
-
-								print '
-											<tr>
-												<td>'.$subscription['id'].'</td>
-												<td>'.$subscription['name'].' </td>
-												<td>'.(int)($subscription['duration'] / 60 / 60 / 24).' д. </td>
-												<td>'.$subscription['price'].' руб.</td>
-												<td>
-													<a href="subscription-edit.php?id='.$subscription['id'].'">Изменить</a> 
-													<a href="index.php?remove_subscription_id='.$subscription['id'].'">Удалить</a> 
-												</td>
-											</tr>
-								';
-							}
-
-							print '
-										</tbody>
-									</table>
-								</div>
-							';
-
-
-						
+							
 						} catch (Longman\TelegramBot\Exception\TelegramException $e) {
 							echo $e->getMessage();
 							// Log telegram errors

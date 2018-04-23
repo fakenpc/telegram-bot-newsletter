@@ -30,7 +30,7 @@ class SubscriptionDB extends DB
      * @return array|bool
      * @throws TelegramException
      */
-    public static function selectSubscription($id = null, $price = null, $limit = null)
+    public static function selectSubscription($id = null, $newsletter_category_id = null, $limit = null)
     {
         if (!self::isDbConnected()) {
             return false;
@@ -53,8 +53,8 @@ class SubscriptionDB extends DB
                 }
             }
             
-            if ($price !== null) {
-                $where[] = '`price` = :price';
+            if ($newsletter_category_id !== null) {
+                $where[] = '`newsletter_category_id` = :newsletter_category_id';
             }
 
             if(count($where)) {
@@ -71,8 +71,8 @@ class SubscriptionDB extends DB
                 $sth->bindValue(':id', $id, PDO::PARAM_INT);
             }
 
-            if($price !== null) {
-                $sth->bindValue(':price', $price, PDO::PARAM_INT);
+            if($newsletter_category_id !== null) {
+                $sth->bindValue(':newsletter_category_id', $newsletter_category_id, PDO::PARAM_INT);
             }
 
             if ($limit !== null) {
@@ -96,7 +96,7 @@ class SubscriptionDB extends DB
      * @return bool
      * @throws TelegramException
      */
-    public static function insertSubscription($name, $duration, $price)
+    public static function insertSubscription($name, $newsletter_category_id, $duration, $price)
     {
         if (!self::isDbConnected()) {
             return false;
@@ -104,14 +104,15 @@ class SubscriptionDB extends DB
 
         try {
             $sth = self::$pdo->prepare('INSERT INTO `' . TB_SUBSCRIPTION . '`
-                (`name`, `duration`, `price`)
+                (`name`, `newsletter_category_id`, `duration`, `price`)
                 VALUES
-                (:name, :duration, :price)
+                (:name, :newsletter_category_id, :duration, :price)
             ');
 
             // $date = self::getTimestamp();
 
             $sth->bindValue(':name', $name);
+            $sth->bindValue(':newsletter_category_id', $newsletter_category_id);
             $sth->bindValue(':duration', $duration);
             $sth->bindValue(':price', $price);
 

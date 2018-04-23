@@ -40,11 +40,12 @@
 									$result = SubscriptionDB::updateSubscription(['name' => $_POST['name'], 'duration' => ($_POST['duration'] * 60 * 60 * 24), 'price' => $_POST['price'] ], ['id' => $subscription_id]);
 								// if add subscription
 								} else {
-									$result = SubscriptionDB::insertSubscription($_POST['name'], ($_POST['duration'] * 60 * 60 * 24), $_POST['price']);
+									$newsletter_category_id = isset($_GET['newsletter_category_id']) ? $_GET['newsletter_category_id'] : 0;
+									$result = SubscriptionDB::insertSubscription($_POST['name'], $newsletter_category_id, ($_POST['duration'] * 60 * 60 * 24), $_POST['price']);
 								}
 
 								if($result) {
-									print "<div class='alert alert-success' role='alert'>Подписка успешно добавлена/обновлена !</div>";
+									print "<div class='alert alert-success' role='alert'>Успешно добавлено/обновлено !</div>";
 								}
 								
 
@@ -74,8 +75,8 @@
 							print '
 								<div class="row">
 									<div class="col-xs-12 col-sm-6">
-										<a href="index.php">Назад</a>
-										<form enctype="multipart/form-data" action="?'.($id ? 'id='.$id : '').'" method="POST">
+										<a href="subscriptions.php?newsletter_category_id='.(isset($_GET['newsletter_category_id']) ? $_GET['newsletter_category_id'] : '0').'">Назад</a>
+										<form enctype="multipart/form-data" action="?'.(http_build_query($_GET)).'" method="POST">
 											<div class="form-group">
 												<label for="name">Название</label>
 												<textarea class="form-control" rows="5" name="name" placeholder="Имя">'.$name.'</textarea>
