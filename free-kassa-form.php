@@ -19,7 +19,7 @@ NewsletterSendedDB::initializeNewsletterSended();
 if(!file_exists('config.php')) {
     die("Please rename example_config.php to config.php and try again. \n");
 } else {
-    require_once 'config.php';
+    require_once __DIR__.'/config.php';
 }
 
 try {
