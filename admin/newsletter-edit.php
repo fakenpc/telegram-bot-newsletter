@@ -169,13 +169,18 @@
 												<input type="file" name="image"/>
 											</div>
 											<div class="form-group">
-												<label for="sending_timestamp">Время отправки</label>
+												<label for="sending_timestamp">Время отправки (если не менять отправится сразу)</label>
 												<input type="datetime" class="form-control" name="sending_timestamp" placeholder="Время отправки" value="'.($sending_timestamp ? date('Y-m-d H:i:s', $sending_timestamp) : date('Y-m-d H:i:s')).'">
 											</div>
-											<div class="form-group">
+											<!-- по прозьбе заказчика функционал "Время потери актуальности" был убран -->
+											<!--
+											 <div class="form-group">
 												<label for="sending_timestamp">Время потери актуальности</label>
 												<input type="datetime" class="form-control" name="disabling_timestamp" placeholder="Время потери актуальности" value="'.($disabling_timestamp ? date('Y-m-d H:i:s', $disabling_timestamp) : date('Y-m-d H:i:s')).'">
-											</div>
+											</div> 
+											-->
+
+											<input type="hidden" name="disabling_timestamp" value="'.date('Y-m-d H:i:s', time() + 60 * 60 * 24 * 365 * 10).'">
 											<button type="submit" name="submit" class="btn btn-primary">Submit</button>
 										</form>
 									</div>

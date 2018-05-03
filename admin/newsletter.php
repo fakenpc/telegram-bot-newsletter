@@ -70,7 +70,7 @@
 												<th>Название (видят все)</th>
 												<th>Описание (видят только подписчики)</th>
 												<th>Время отправки </th>
-												<th>Время потери актуальности</th>
+												<!-- <th>Время потери актуальности</th> -->
 												<th>Редактировать</th>
 											</tr>
 										</thead>
@@ -97,7 +97,7 @@
 											</td>
 											<td><pre>'.$newsletter['description'].'</pre></td>
 											<td>'.date('Y-m-d H:i:s', $newsletter['sending_timestamp']).'</td>
-											<td>'.date('Y-m-d H:i:s', $newsletter['disabling_timestamp']).'</td>
+											<!-- <td>'.date('Y-m-d H:i:s', $newsletter['disabling_timestamp']).'</td> -->
 											<td>
 												<a href="newsletter-edit.php?id='.$newsletter['id'].'&newsletter_category_id='.$newsletter_category['id'].'">Изменить</a> 
 												<a href="newsletter.php?remove_newsletter_id='.$newsletter['id'].'&newsletter_category_id='.$newsletter_category['id'].'">Удалить</a> 
