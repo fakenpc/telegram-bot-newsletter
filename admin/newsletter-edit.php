@@ -155,7 +155,7 @@
 								<div class="row">
 									<div class="col-xs-12 col-sm-6">
 										<a href="newsletter.php?newsletter_category_id='.$_GET['newsletter_category_id'].'">Назад</a>
-										<form enctype="multipart/form-data" action="?newsletter_category_id='.$_GET['newsletter_category_id'].'&'.($id ? 'id='.$id : '#').'" method="POST">
+										<form enctype="multipart/form-data" action="?newsletter_category_id='.$_GET['newsletter_category_id'].'&'.($id ? 'id='.$id : '').'" method="POST">
 											<div class="form-group">
 												<label for="name">Название (видят все)</label>
 												<textarea class="form-control" rows="5" name="name" placeholder="Название">'.$name.'</textarea>

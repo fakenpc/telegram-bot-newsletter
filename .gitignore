@@ -6,3 +6,5 @@ cookies
 *.pid
 test.php
 *.log
+/images/
+!/images/404.png

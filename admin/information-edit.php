@@ -94,40 +94,29 @@
 												unlink($filename);
 											}
 
-											// resize image and convert to png
-											$max_dim = 200;
+											// convert to png
 									        $filename = $_FILES['field-images']['tmp_name'][$order];
 									        list($width, $height, $type, $attr) = getimagesize( $filename );
 									        
-									        if ( $width > $max_dim || $height > $max_dim ) {
-									            $ratio = $width/$height;
-									            if( $ratio > 1) {
-									                $new_width = $max_dim;
-									                $new_height = $max_dim/$ratio;
-									            } else {
-									                $new_width = $max_dim*$ratio;
-									                $new_height = $max_dim;
-									            }
-									            $src = imagecreatefromstring( file_get_contents( $filename ) );
-									            
-									            if($src === false) {
-									            	print "<div class='alert alert-danger' role='alert'>Sorry, there was an error uploading your file.</div>";
-									            }
+									        
+								            $src = imagecreatefromstring( file_get_contents( $filename ) );
+								            
+								            if($src === false) {
+								            	print "<div class='alert alert-danger' role='alert'>Sorry, there was an error uploading your file.</div>";
+								            }
 
-									            $dst = imagecreatetruecolor( $new_width, $new_height );
-									            imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
-									            imagedestroy( $src );
-									            
-									            if (imagepng( $dst, $target_file )) {
-													print "<div class='alert alert-success' role='alert'>The file ". basename( $_FILES['field-images']["name"][$order]). " has been uploaded.</div>";
-												} else {
-													print "<div class='alert alert-danger' role='alert'>Sorry, there was an error uploading your file.</div>";
-												}
+								            $dst = imagecreatetruecolor( $width, $height );
+								            imagecopyresampled( $dst, $src, 0, 0, 0, 0, $width, $height, $width, $height );
+								            imagedestroy( $src );
+								            
+								            if (imagepng( $dst, $target_file )) {
+												print "<div class='alert alert-success' role='alert'>The file ". basename( $_FILES['field-images']["name"][$order]). " has been uploaded.</div>";
+											} else {
+												print "<div class='alert alert-danger' role='alert'>Sorry, there was an error uploading your file.</div>";
+											}
 
-									            imagedestroy( $dst );
-									        } else {
-									        	print "<div class='alert alert-danger' role='alert'>Изображение слишком маленькое ($width x $height). Его размеры должны превышать $max_dim x $max_dim </div>";
-									        }
+								            imagedestroy( $dst );
+								       
 
 											/*if (move_uploaded_file($_FILES['field-images']["tmp_name"][$order], $target_file)) {
 												print "<div class='alert alert-success' role='alert'>The file ". basename( $_FILES['field-images']["name"][$order]). " has been uploaded.</div>";
@@ -163,7 +152,7 @@
 													<input type="hidden" name="field-ids[]" value="'.$field['id'].'">
 													<input type="hidden" name="field-values[]" value="image">
 													<input type="file" class="form-control" name="field-images[]"/>
-													<br><img class="img-responsive" src="'.$images_dir.current(glob($images_dir.'field_'.$field['id'].'.*')).'">
+													<br><img class="img-responsive" src="'.$images_dir.current(glob($images_dir.'field_'.$field['id'].'.*')).'?cacheoff='.time().'">
 												</div>
 											
 									';
